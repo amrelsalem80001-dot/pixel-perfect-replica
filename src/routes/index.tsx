@@ -34,12 +34,7 @@ function Index() {
   return (
     <div className="mx-auto max-w-6xl space-y-8">
       <section className="relative overflow-hidden rounded-3xl border">
-        <img src={skyline.url} alt="AI Magic City skyline" className="h-56 w-full object-cover sm:h-72" />
-        <div className="absolute inset-0 bg-hero-fade" />
-        <div className="absolute inset-x-0 bottom-0 p-6">
-          <h1 className="text-3xl font-black sm:text-4xl">{tr("مدينة وسوق ", "The Arab ")}<span className="text-gold">{tr("الذكاء الاصطناعي العربي", "AI Magic City")}</span></h1>
-          <p className="mt-2 max-w-xl text-muted-foreground">{tr("شارك، صوّت، تعلّم واجمع XP مع آلاف صناع الذكاء الاصطناعي.", "Share, vote, learn and earn XP with thousands of AI builders.")}</p>
-        </div>
+        <img src={skyline.url} alt={tr("مدينة الذكاء الاصطناعي العربي", "AI Magic City skyline")} className="w-full object-cover" />
       </section>
 
       <section className="grid gap-6 rounded-3xl border border-primary/30 bg-card p-6 glow lg:grid-cols-[1fr_280px]">

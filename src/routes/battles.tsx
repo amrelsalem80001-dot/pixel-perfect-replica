@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/battles")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "مواجهات الذكاء الاصطناعي | AI Magic City" },
       { name: "description", content: "صوّت في مواجهات النماذج: Claude ضد GPT-4o، Midjourney ضد MiniMax والمزيد." },
       { property: "og:title", content: "مواجهات الذكاء الاصطناعي" },

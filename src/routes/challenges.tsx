@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/challenges")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "التحديات | AI Magic City" },
       { name: "description", content: "شارك في تحديات الذكاء الاصطناعي الأسبوعية واكسب نقاط XP." },
       { property: "og:title", content: "تحديات الذكاء الاصطناعي" },

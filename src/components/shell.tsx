@@ -1,14 +1,16 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Home, Users, Wrench, Swords, Trophy, Medal, Search, Bell, Plus, Sun, Moon, Languages, PanelRightClose, PanelRightOpen, BadgeCheck, Download, Share } from "lucide-react";
+import { Home, Users, Wrench, Swords, Trophy, Medal, Search, Bell, Plus, Sun, Moon, Languages, PanelRightClose, PanelRightOpen, Download, Share } from "lucide-react";
 import { useApp } from "@/lib/app-store";
-import { getTier, isVerified } from "@/lib/tiers";
 import { COMMUNITIES, MEMBERS, POSTS, TOOLS } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { SubmitToolDialog } from "./submit-tool";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useCloud } from "@/lib/cloud-store";
+import { VerifiedBadge } from "./member-badge";
+export { VerifiedBadge } from "./member-badge";
 
 export const NAV = [
   { to: "/", icon: Home, ar: "الرئيسية", en: "Home" },
@@ -19,19 +21,15 @@ export const NAV = [
   { to: "/leaderboard", icon: Medal, ar: "المتصدرين", en: "Leaderboard" },
 ] as const;
 
-export function VerifiedBadge({ xp }: { xp: number }) {
-  if (!isVerified(xp)) return null;
-  return <BadgeCheck className="inline size-4 shrink-0 fill-primary text-primary-foreground" aria-label="verified" />;
-}
-
 export function AppShell({ children }: { children: ReactNode }) {
   const app = useApp();
+  const cloud = useCloud();
   const { tr, lang, theme, xp, set } = app;
   const [collapsed, setCollapsed] = useState(false);
   const [cmd, setCmd] = useState(false);
   const [submit, setSubmit] = useState(false);
   const path = useRouterState({ select: (r) => r.location.pathname });
-  const tier = getTier(xp);
+
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); setCmd((o) => !o); } };
@@ -56,13 +54,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Button variant="ghost" size="icon" className="relative" onClick={() => set({ notifications: 0 })} aria-label="notifications">
               <Bell />{app.notifications > 0 && <span className="absolute -top-0.5 end-0.5 grid size-4 place-items-center rounded-full bg-destructive text-[10px] text-destructive-foreground">{app.notifications}</span>}
             </Button>
-            <div className="hidden items-center gap-2 rounded-full border bg-card py-1 ps-1 pe-3 lg:flex">
-              <div className="grid size-8 place-items-center rounded-full bg-gold font-bold text-primary-foreground">ع</div>
-              <div className="leading-tight">
-                <div className="text-xs text-muted-foreground">{tr(tier.ar, tier.en)}</div>
+            <Link to="/profile" aria-label={tr("الملف الشخصي", "Profile")} title={tr("الملف الشخصي", "Profile")} className="flex shrink-0 items-center gap-2 rounded-full border bg-card p-1 lg:pe-3">
+              <div className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-gold font-bold text-primary-foreground">{cloud.profile?.avatarUrl ? <img src={cloud.profile.avatarUrl} alt="" className="size-full object-cover" /> : (cloud.profile?.display_name[0] ?? "ع")}</div>
+              <div className="hidden leading-tight lg:block">
+                <VerifiedBadge xp={xp} />
                 <div className="text-sm font-bold text-primary">⚡ {xp} XP</div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </header>

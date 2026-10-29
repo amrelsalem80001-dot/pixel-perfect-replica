@@ -4,10 +4,13 @@ import { MEMBERS } from "@/lib/data";
 import { getTier, TIERS } from "@/lib/tiers";
 import { VerifiedBadge } from "@/components/shell";
 import { cn } from "@/lib/utils";
+import { useCloud } from "@/lib/cloud-store";
 
 export const Route = createFileRoute("/leaderboard")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "المتصدرين | AI Magic City" },
       { name: "description", content: "قائمة أكثر الأعضاء تفاعلاً ونقاط XP في مجتمع الذكاء الاصطناعي العربي." },
       { property: "og:title", content: "المتصدرين | AI Magic City" },
@@ -19,7 +22,8 @@ export const Route = createFileRoute("/leaderboard")({
 
 function Leaderboard() {
   const { tr, xp, authorXp } = useApp();
-  const rows = [...MEMBERS.map((m) => ({ ...m, xp: m.xp + (authorXp[m.id] ?? 0) })), { id: "me", name: tr("أنت", "You"), handle: "me", xp }].sort((a, b) => b.xp - a.xp);
+  const cloud = useCloud();
+  const rows = [...cloud.platform.members].sort((a, b) => b.xp - a.xp);
   const next = TIERS.find((t) => t.min > xp);
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -35,12 +39,12 @@ function Leaderboard() {
       {next && <p className="text-sm text-muted-foreground">{tr(`تحتاج ${next.min - xp} XP للوصول إلى «${next.ar}»`, `${next.min - xp} XP to reach “${next.en}”`)}</p>}
       <ol className="divide-y rounded-2xl border bg-card">
         {rows.map((r, i) => (
-          <li key={r.id} className={cn("flex items-center gap-3 p-4", r.id === "me" && "bg-accent/50")}>
+          <li key={r.id} className={cn("flex items-center gap-3 p-4", r.id === cloud.user?.id && "bg-accent/50")}>
             <span className={cn("w-6 text-center font-black", i < 3 ? "text-gold" : "text-muted-foreground")}>{i + 1}</span>
             <div className="grid size-9 shrink-0 place-items-center rounded-full bg-muted font-bold">{r.name[0]}</div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1 truncate font-semibold">{r.name}<VerifiedBadge xp={r.xp} /></div>
-              <div className="text-xs text-muted-foreground">{tr(getTier(r.xp).ar, getTier(r.xp).en)}</div>
+              <div className="text-xs text-muted-foreground" dir="ltr">@{r.handle}</div>
             </div>
             <span className="font-bold text-primary">⚡ {r.xp}</span>
           </li>

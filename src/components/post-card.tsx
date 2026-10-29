@@ -89,7 +89,7 @@ export function PostCard({ post }: { post: Post }) {
             {post.poll.options.map((o, i) => {
               const votesArr = post.poll!.votes.map((v, j) => v + (myPoll === j ? 1 : 0));
               const total = votesArr.reduce((a, b) => a + b, 0);
-              const pct = Math.round((votesArr[i] / total) * 100);
+              const pct = Math.round(((votesArr[i] ?? 0) / total) * 100);
               return (
                 <button key={i} onClick={() => set({ pollVotes: { ...pollVotes, [post.id]: i } })} className={cn("relative w-full overflow-hidden rounded-lg border p-2.5 text-start text-sm", myPoll === i && "border-primary")}>
                   <div className="absolute inset-y-0 start-0 bg-primary/20 transition-all" style={{ width: myPoll !== undefined ? `${pct}%` : 0 }} />

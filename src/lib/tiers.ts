@@ -12,7 +12,7 @@ export const UPVOTE_XP = 5;
 export const DOWNVOTE_XP = -2;
 
 export function getTier(xp: number) {
-  let t = TIERS[0];
+  let t = TIERS[0]!;
   for (const tier of TIERS) if (xp >= tier.min) t = tier;
   return t;
 }

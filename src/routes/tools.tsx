@@ -1,15 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ExternalLink, Star, Plus } from "lucide-react";
+import { ExternalLink, Star, Plus, Bookmark } from "lucide-react";
 import { useApp } from "@/lib/app-store";
 import { TOOLS, TOOL_CATEGORIES } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { SubmitToolDialog } from "@/components/submit-tool";
 import { cn } from "@/lib/utils";
+import { useCloud } from "@/lib/cloud-store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/tools")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "دليل أدوات الذكاء الاصطناعي | AI Magic City" },
       { name: "description", content: "اكتشف أفضل أدوات الذكاء الاصطناعي حسب التصنيف وأضف أداتك." },
       { property: "og:title", content: "دليل أدوات الذكاء الاصطناعي" },
@@ -21,6 +25,7 @@ export const Route = createFileRoute("/tools")({
 
 function Tools() {
   const { t, tr } = useApp();
+  const cloud = useCloud();
   const [cat, setCat] = useState("all");
   const [open, setOpen] = useState(false);
   const list = TOOLS.filter((x) => cat === "all" || x.cat === cat).sort((a, b) => Number(b.featured) - Number(a.featured));
@@ -40,7 +45,7 @@ function Tools() {
           <div key={x.id} className={cn("relative flex flex-col gap-3 rounded-2xl border bg-card p-5", x.featured && "border-primary/50 glow")}>
             {x.featured && <span className="absolute end-4 top-4 rounded-full bg-gold px-2 py-0.5 text-xs font-bold text-primary-foreground">{tr("مميز", "Featured")}</span>}
             <div className="grid size-12 place-items-center rounded-xl bg-muted text-xl font-black text-primary">{x.name[0]}</div>
-            <div className="font-bold">{x.name}</div>
+            <div className="flex items-center justify-between"><div className="font-bold">{x.name}</div><Button variant="ghost" size="icon" aria-label={`Save ${x.name}`} title={tr("حفظ الأداة", "Save tool")} aria-pressed={cloud.saved.includes(x.id)} onClick={() => cloud.toggleSaved(x.id).catch(() => toast.error(cloud.user ? tr("تعذر الحفظ", "Could not save") : tr("سجل الدخول من ملفك الشخصي لحفظ الأدوات", "Sign in on your profile to save tools")))}><Bookmark className={cloud.saved.includes(x.id) ? "fill-primary text-primary" : "text-muted-foreground"} /></Button></div>
             <p className="text-sm text-muted-foreground">{t(x.desc)}</p>
             <div className="mt-auto flex items-center justify-between">
               <span className="flex items-center gap-1 text-sm"><Star className="size-4 fill-primary text-primary" />{x.rating}</span>

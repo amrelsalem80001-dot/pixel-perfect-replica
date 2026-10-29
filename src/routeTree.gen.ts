@@ -14,6 +14,7 @@ import { Route as BattlesRouteImport } from './routes/battles'
 import { Route as ChallengesRouteImport } from './routes/challenges'
 import { Route as CommunitiesRouteImport } from './routes/communities'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ToolsRouteImport } from './routes/tools'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const LeaderboardRoute = LeaderboardRouteImport.update({
   path: '/leaderboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/challenges': typeof ChallengesRoute
   '/communities': typeof CommunitiesRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
   '/tools': typeof ToolsRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/challenges': typeof ChallengesRoute
   '/communities': typeof CommunitiesRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
   '/tools': typeof ToolsRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/challenges': typeof ChallengesRoute
   '/communities': typeof CommunitiesRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
   '/tools': typeof ToolsRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/challenges'
     | '/communities'
     | '/leaderboard'
+    | '/profile'
     | '/tools'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/challenges'
     | '/communities'
     | '/leaderboard'
+    | '/profile'
     | '/tools'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/challenges'
     | '/communities'
     | '/leaderboard'
+    | '/profile'
     | '/tools'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   ChallengesRoute: typeof ChallengesRoute
   CommunitiesRoute: typeof CommunitiesRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  ProfileRoute: typeof ProfileRoute
   ToolsRoute: typeof ToolsRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools': {
       id: '/tools'
       path: '/tools'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChallengesRoute: ChallengesRoute,
   CommunitiesRoute: CommunitiesRoute,
   LeaderboardRoute: LeaderboardRoute,
+  ProfileRoute: ProfileRoute,
   ToolsRoute: ToolsRoute,
 }
 export const routeTree = rootRouteImport

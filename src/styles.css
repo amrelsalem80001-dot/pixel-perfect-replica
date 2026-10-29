@@ -31,6 +31,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-cyber: var(--cyber);
+  --color-verified-blue: var(--verified-blue);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -72,6 +73,7 @@
   --destructive-foreground: oklch(0.98 0 0);
   --success: oklch(0.6 0.15 155);
   --cyber: oklch(0.65 0.12 200);
+  --verified-blue: oklch(0.55 0.21 255);
   --border: oklch(0.91 0.005 286);
   --input: oklch(0.91 0.005 286);
   --ring: oklch(0.68 0.16 70);
@@ -114,6 +116,7 @@
   --destructive: oklch(0.65 0.2 25);
   --success: oklch(0.72 0.16 155);
   --cyber: oklch(0.78 0.12 200);
+  --verified-blue: oklch(0.73 0.16 255);
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.8 0.15 80);
@@ -157,3 +160,12 @@
   text-shadow: 0 0 18px color-mix(in oklab, var(--primary) 60%, transparent);
 }
 @utility bg-hero-fade { background-image: var(--gradient-hero); }
+
+.tier-explorer { color: var(--muted-foreground); }
+.tier-contributor { color: var(--success); }
+.tier-specialist { color: var(--verified-blue); }
+.tier-elite { color: var(--primary); }
+.tier-elite svg { filter: drop-shadow(0 0 5px var(--primary)); }
+.counter-change { animation: counter-rise .35s ease-out; }
+@keyframes counter-rise { from { transform: translateY(4px); opacity: .5; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .counter-change { animation: none; } }

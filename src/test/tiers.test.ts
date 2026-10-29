@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getTier, isVerified, canCreateCommunity, voteXpDelta } from "@/lib/tiers";
+import { getTier, isVerified, canCreateCommunity, voteXpDelta, tierProgress } from "@/lib/tiers";
 
 describe("tiers", () => {
   it("tier boundaries", () => {
@@ -7,11 +7,18 @@ describe("tiers", () => {
     expect(getTier(50).id).toBe("contributor");
     expect(getTier(149).id).toBe("contributor");
     expect(getTier(150).id).toBe("specialist");
-    expect(getTier(250).id).toBe("elite");
+    expect(getTier(250).id).toBe("specialist");
+    expect(getTier(299).id).toBe("specialist");
+    expect(getTier(300).id).toBe("elite");
   });
-  it("verified badge at 250+", () => {
-    expect(isVerified(249)).toBe(false);
-    expect(isVerified(250)).toBe(true);
+  it("verified badge begins at 50 XP", () => {
+    expect(isVerified(49)).toBe(false);
+    expect(isVerified(50)).toBe(true);
+  });
+  it("progress targets 300 XP for a technical pro", () => {
+    expect(tierProgress(180).remaining).toBe(120);
+    expect(tierProgress(180).percent).toBe(20);
+    expect(tierProgress(300).percent).toBe(100);
   });
   it("community creation needs 50 XP", () => {
     expect(canCreateCommunity(49)).toBe(false);

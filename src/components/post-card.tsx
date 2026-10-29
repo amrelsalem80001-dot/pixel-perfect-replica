@@ -6,6 +6,7 @@ import { MEMBERS, COMMUNITIES, type Post } from "@/lib/data";
 import { VerifiedBadge } from "./shell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useCloud } from "@/lib/cloud-store";
 
 const TYPE_LABEL = {
   discussion: { ar: "نقاش", en: "Discussion" }, question: { ar: "سؤال برمجي", en: "Question" },
@@ -28,8 +29,9 @@ function highlight(src: string) {
 
 export function PostCard({ post }: { post: Post }) {
   const { t, tr, votes, vote, authorXp, loggedIn, pollVotes, set } = useApp();
-  const author = MEMBERS.find((m) => m.id === post.authorId)!;
-  const community = COMMUNITIES.find((c) => c.id === post.community)!;
+  const cloud = useCloud();
+  const author = cloud.platform.members.find(m => m.id === post.authorId) ?? MEMBERS.find((m) => m.id === post.authorId) ?? { id: post.authorId, name: tr("عضو", "Member"), xp: 0 };
+  const community = cloud.platform.communities.find((c) => c.id === post.community) ?? COMMUNITIES.find((c) => c.id === post.community);
   const my = votes[post.id] ?? 0;
   const score = post.score + my;
   const aXp = author.xp + (authorXp[author.id] ?? 0);
@@ -45,7 +47,7 @@ export function PostCard({ post }: { post: Post }) {
       <div className="min-w-0 flex-1 space-y-3">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span className="rounded-full bg-accent px-2 py-0.5 font-medium text-accent-foreground">{t(TYPE_LABEL[post.type])}</span>
-          <span>{t(community.name)}</span>·
+          <span>{community ? t(community.name) : tr("المجتمع", "Community")}</span>·
           <span className="inline-flex items-center gap-1 font-medium text-foreground">{author.name}<VerifiedBadge xp={aXp} /></span>
           <span>⚡{aXp}</span>·<span>{t(post.time)}</span>
           {post.answered && <span className="inline-flex items-center gap-1 text-success"><CheckCircle2 className="size-3.5" />{tr("تم قبول إجابة", "Answer accepted")}</span>}
@@ -57,7 +59,7 @@ export function PostCard({ post }: { post: Post }) {
           <div className="overflow-hidden rounded-xl border bg-muted/50" dir="ltr">
             <div className="flex items-center justify-between border-b px-3 py-1.5 text-xs text-muted-foreground">
               <span>{post.code.lang}</span>
-              <button className="inline-flex items-center gap-1 hover:text-primary" onClick={() => { navigator.clipboard.writeText(post.code!.src); toast.success(tr("تم نسخ الكود", "Code copied")); }}>
+              <button className="inline-flex items-center gap-1 hover:text-primary" onClick={() => { if (!post.code) return; navigator.clipboard.writeText(post.code.src); toast.success(tr("تم نسخ الكود", "Code copied")); }}>
                 <Copy className="size-3.5" />{tr("نسخ الكود", "Copy code")}
               </button>
             </div>
@@ -76,9 +78,10 @@ export function PostCard({ post }: { post: Post }) {
             </div>
             <Button size="sm" variant={loggedIn ? "default" : "outline"} onClick={() => {
               if (!loggedIn) { toast.error(tr("سجّل الدخول لتحميل الملف", "Log in to download")); return; }
-              const content = post.attachment!.kind === "n8n" ? JSON.stringify({ name: t(post.title), nodes: [], connections: {} }, null, 2) : `# ${t(post.title)}\nprint("AI Magic City")\n`;
+              if (!post.attachment) return;
+              const content = post.attachment.kind === "n8n" ? JSON.stringify({ name: t(post.title), nodes: [], connections: {} }, null, 2) : `# ${t(post.title)}\nprint("AI Magic City")\n`;
               const url = URL.createObjectURL(new Blob([content], { type: "text/plain" }));
-              const a = document.createElement("a"); a.href = url; a.download = post.attachment!.name; a.click();
+              const a = document.createElement("a"); a.href = url; a.download = post.attachment.name; a.click();
               setTimeout(() => URL.revokeObjectURL(url), 30000);
             }}><Download />{tr("تحميل", "Download")}</Button>
           </div>
@@ -87,9 +90,9 @@ export function PostCard({ post }: { post: Post }) {
         {post.poll && (
           <div className="space-y-2">
             {post.poll.options.map((o, i) => {
-              const votesArr = post.poll!.votes.map((v, j) => v + (myPoll === j ? 1 : 0));
+              const votesArr = (post.poll?.votes ?? []).map((v, j) => v + (myPoll === j ? 1 : 0));
               const total = votesArr.reduce((a, b) => a + b, 0);
-              const pct = Math.round(((votesArr[i] ?? 0) / total) * 100);
+              const pct = total ? Math.round(((votesArr[i] ?? 0) / total) * 100) : 0;
               return (
                 <button key={i} onClick={() => set({ pollVotes: { ...pollVotes, [post.id]: i } })} className={cn("relative w-full overflow-hidden rounded-lg border p-2.5 text-start text-sm", myPoll === i && "border-primary")}>
                   <div className="absolute inset-y-0 start-0 bg-primary/20 transition-all" style={{ width: myPoll !== undefined ? `${pct}%` : 0 }} />

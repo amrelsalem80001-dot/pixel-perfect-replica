@@ -63,14 +63,14 @@ export const TOOLS = [
 ];
 
 export const MODEL_OF_WEEK = {
-  name: "Claude 3.5 Sonnet", vendor: "Anthropic", score: 9.8,
+  name: "Claude 3.7 Sonnet (Hybrid Reasoning)", vendor: "Anthropic", score: 9.9,
   radar: [
     { k: { ar: "البرمجة", en: "Coding" }, v: 97 }, { k: { ar: "الاستدلال", en: "Reasoning" }, v: 93 },
     { k: { ar: "العربية", en: "Arabic" }, v: 90 }, { k: { ar: "السرعة", en: "Speed" }, v: 84 },
     { k: { ar: "السعر", en: "Price" }, v: 78 }, { k: { ar: "السياق", en: "Context" }, v: 88 },
   ],
-  pros: [{ ar: "أفضل أداء في البرمجة", en: "Top-tier coding" }, { ar: "فهم ممتاز للعربية", en: "Excellent Arabic" }],
-  cons: [{ ar: "لا يولد صوراً", en: "No image generation" }, { ar: "حدود استخدام يومية", en: "Daily usage caps" }],
+  pros: [{ ar: "التفكير العميق الهجين", en: "Deep hybrid reasoning" }, { ar: "قدرات برمجية خارقة", en: "Exceptional coding capabilities" }, { ar: "تحليل سياق فائق الدقة", en: "Highly precise context analysis" }],
+  cons: [{ ar: "استهلاك توكنز أعلى في وضع التفكير", en: "Higher token usage in reasoning mode" }, { ar: "تكلفة إضافية", en: "Additional cost" }],
   uses: [{ ar: "وكلاء البرمجة", en: "Coding agents" }, { ar: "تحليل المستندات", en: "Doc analysis" }, { ar: "كتابة المحتوى", en: "Copywriting" }],
 };
 

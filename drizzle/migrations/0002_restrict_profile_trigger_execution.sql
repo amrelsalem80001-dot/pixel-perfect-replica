@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.create_member_profile() FROM PUBLIC, anon, authenticated;

@@ -7,6 +7,9 @@ import { useApp } from "@/lib/app-store";
 import { MODEL_OF_WEEK, POSTS, COMMUNITIES, type PostType } from "@/lib/data";
 import { PostCard } from "@/components/post-card";
 import { cn } from "@/lib/utils";
+import { useCloud } from "@/lib/cloud-store";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,6 +18,10 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "أكبر مجتمع عربي لأدوات ونماذج الذكاء الاصطناعي: نقاشات، مواجهات، تحديات وأدوات." },
       { property: "og:title", content: "AI Magic City — مدينة الذكاء الاصطناعي العربي" },
       { property: "og:description", content: "مجتمع عربي لأدوات ونماذج الذكاء الاصطناعي." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: skyline.url },
+      { name: "twitter:image", content: skyline.url },
     ],
   }),
   component: Index,
@@ -22,6 +29,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { t, tr } = useApp();
+  const cloud = useCloud();
   const [filter, setFilter] = useState<PostType | "all">("all");
   const m = MODEL_OF_WEEK;
   const radar = m.radar.map((r) => ({ k: t(r.k), v: r.v }));
@@ -29,7 +37,7 @@ function Index() {
     { id: "all", ar: "الكل", en: "All" }, { id: "discussion", ar: "نقاش", en: "Discussion" }, { id: "question", ar: "سؤال برمجي", en: "Questions" },
     { id: "poll", ar: "استطلاع", en: "Polls" }, { id: "showcase", ar: "إبداع", en: "Showcase" },
   ];
-  const posts = POSTS.filter((p) => filter === "all" || p.type === filter);
+  const posts = cloud.platform.posts.filter((p) => filter === "all" || p.type === filter);
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -37,6 +45,12 @@ function Index() {
         <img src={skyline.url} alt={tr("مدينة الذكاء الاصطناعي العربي", "AI Magic City skyline")} className="w-full object-cover" />
       </section>
 
+      <section className="flex flex-wrap items-center justify-between gap-5 border-b pb-6">
+        <div className="flex flex-wrap gap-6">
+          {[{ value: cloud.stats.posts, label: tr("المنشورات", "Posts") }, { value: cloud.stats.members, label: tr("الأعضاء النشطين", "Active members") }, { value: cloud.stats.communities, label: tr("المجتمعات", "Communities") }].map(stat => <div key={stat.label}><div key={stat.value} className="counter-change text-2xl font-black text-primary">{stat.value.toLocaleString()}</div><div className="text-xs text-muted-foreground">{stat.label}</div></div>)}
+        </div>
+        {cloud.user ? <Button disabled={cloud.joined.includes("agents")} onClick={() => cloud.join("agents").catch(() => toast.error(tr("تعذر الانضمام، حاول مجدداً", "Could not join. Try again.")))}>{cloud.joined.includes("agents") ? tr("أنت عضو بالفعل ✓", "Already a member ✓") : tr("انضم إلى المجتمع الآن", "Join the community now")}</Button> : <Button asChild><Link to="/profile">{tr("انضم إلى المجتمع الآن", "Join the community now")}</Link></Button>}
+      </section>
       <section className="grid gap-6 rounded-3xl border border-primary/30 bg-card p-6 glow lg:grid-cols-[1fr_280px]">
         <div className="space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-sm font-bold text-accent-foreground"><Sparkles className="size-4" />{tr("نموذج الأسبوع", "Model of the Week")}</div>
@@ -44,6 +58,7 @@ function Index() {
             <div>
               <h2 className="text-3xl font-black">{m.name}</h2>
               <div className="text-sm text-muted-foreground">{m.vendor}</div>
+              <div className="mt-2 text-sm font-bold text-primary">{tr("النموذج البرمجي الأقوى عالمياً", "The world’s strongest coding model")}</div>
             </div>
             <div className="ms-auto text-end">
               <div className="text-4xl font-black text-gold">{m.score}<span className="text-lg text-muted-foreground">/10</span></div>
@@ -86,10 +101,10 @@ function Index() {
         </section>
         <aside className="space-y-3">
           <h3 className="font-bold">{tr("المجتمعات الأساسية", "Core communities")}</h3>
-          {COMMUNITIES.map((c) => (
+          {cloud.platform.communities.map((c) => (
             <Link key={c.id} to="/communities" className="block rounded-xl border bg-card p-3 text-sm transition hover:border-primary/40">
               <div className="font-semibold">{t(c.name)}</div>
-              <div className="text-xs text-muted-foreground">{c.members.toLocaleString()} {tr("عضو", "members")}</div>
+              <div className="text-xs text-muted-foreground">{(cloud.stats.communityMembers[c.id] ?? 0).toLocaleString()} {tr("عضو", "members")}</div>
             </Link>
           ))}
         </aside>

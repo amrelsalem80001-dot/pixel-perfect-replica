@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "scripts": {
-    "dev": "vite dev",
-    "build": "NITRO_PRESET=node-server vite build",
+    "build": "vite build && mkdir -p dist && cp -a .output/public/. dist/",
     "start": "node .output/server/index.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",

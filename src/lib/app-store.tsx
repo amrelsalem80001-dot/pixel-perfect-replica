@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { voteXpDelta } from "./tiers";
 import type { L } from "./data";
+import { useCloud } from "./cloud-store";
 
 type Lang = "ar" | "en";
 type Theme = "dark" | "light";
@@ -23,6 +24,7 @@ const C = createContext<Ctx | null>(null);
 const KEY = "aimc-state-v1";
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const cloud = useCloud();
   const [s, setS] = useState<State>(initial);
   useEffect(() => {
     try { const raw = localStorage.getItem(KEY); if (raw) setS({ ...initial, ...JSON.parse(raw) }); } catch {}
@@ -45,7 +47,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const t = (l: L) => l[s.lang];
   const tr = (ar: string, en: string) => (s.lang === "ar" ? ar : en);
-  return <C.Provider value={{ ...s, t, tr, set, vote }}>{children}</C.Provider>;
+  return <C.Provider value={{ ...s, xp: cloud.xp, loggedIn: !!cloud.user, joined: cloud.joined, t, tr, set, vote }}>{children}</C.Provider>;
 }
 
 export function useApp() {

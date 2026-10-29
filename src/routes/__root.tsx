@@ -16,6 +16,8 @@ import { AppProvider } from "@/lib/app-store";
 import { AppShell } from "@/components/shell";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { CloudProvider } from "@/lib/cloud-store";
+import { platformQuery } from "@/lib/platform-query";
 
 function NotFoundComponent() {
   return (
@@ -49,6 +51,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: ({ context }) => context.queryClient.ensureQueryData(platformQuery),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -93,6 +96,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
+      <CloudProvider>
       <AppProvider>
         <TooltipProvider>
           <AppShell>
@@ -101,6 +105,7 @@ function RootComponent() {
           <Toaster />
         </TooltipProvider>
       </AppProvider>
+      </CloudProvider>
     </QueryClientProvider>
   );
 }

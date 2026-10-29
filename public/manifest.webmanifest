@@ -1,0 +1,11 @@
+{
+  "name": "AI Magic City",
+  "short_name": "AI City",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0d",
+  "theme_color": "#0b0b0d",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [{ "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" }]
+}

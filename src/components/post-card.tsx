@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ChevronUp, ChevronDown, MessageSquare, Copy, FileJson, FileCode, Download, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useApp } from "@/lib/app-store";
@@ -13,7 +14,7 @@ const TYPE_LABEL = {
 
 function highlight(src: string) {
   const re = /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(import|from|with|as|for|in|def|return|if|else|print|class|const|let|await|async)\b|\b(\d+)\b/gm;
-  const out: (string | JSX.Element)[] = [];
+  const out: ReactNode[] = [];
   let last = 0, m: RegExpExecArray | null, i = 0;
   while ((m = re.exec(src))) {
     out.push(src.slice(last, m.index));

@@ -14,13 +14,166 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      communities: {
+        Row: {
+          created_by: string | null
+          description: Json
+          icon: string
+          id: string
+          name: Json
+        }
+        Insert: {
+          created_by?: string | null
+          description: Json
+          icon?: string
+          id: string
+          name: Json
+        }
+        Update: {
+          created_by?: string | null
+          description?: Json
+          icon?: string
+          id?: string
+          name?: Json
+        }
+        Relationships: []
+      }
+      community_memberships: {
+        Row: {
+          community_id: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_memberships_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_memberships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_xp: {
+        Row: {
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          user_id?: string
+          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_xp_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string | null
+          content: Json
+          created_at: string
+          id: string
+        }
+        Insert: {
+          author_id?: string | null
+          content: Json
+          created_at?: string
+          id: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: Json
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_path: string | null
+          banner_path: string | null
+          bio: string
+          display_name: string
+          id: string
+          joined_at: string
+          username: string
+        }
+        Insert: {
+          avatar_path?: string | null
+          banner_path?: string | null
+          bio?: string
+          display_name?: string
+          id: string
+          joined_at?: string
+          username: string
+        }
+        Update: {
+          avatar_path?: string | null
+          banner_path?: string | null
+          bio?: string
+          display_name?: string
+          id?: string
+          joined_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      saved_tools: {
+        Row: {
+          tool_id: string
+          user_id: string
+        }
+        Insert: {
+          tool_id: string
+          user_id: string
+        }
+        Update: {
+          tool_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_tools_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      platform_stats: { Args: never; Returns: Json }
     }
     Enums: {
       [_ in never]: never
